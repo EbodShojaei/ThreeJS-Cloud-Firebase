@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Testing Three.js</title>    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0px;
+        }
+    </style>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "./build/three.module.js",
+            "three/examples/jsm/controls/OrbitControls":"./jsm/controls/OrbitControls.js",
+            "three/examples/jsm/loaders/GLTFLoader":"./jsm/loaders/GLTFLoader.js",
+            "three/examples/jsm/libs/stats.module":"./jsm/libs/stats.module.js",
+            "three/examples/jsm/loaders/DRACOLoader":"./jsm/loaders/DRACOLoader.js",
+            "firebase/app":"./firebase/firebase-app.js",
+            "firebase/fs":"./firebase/firebase-firestore.js",
+            "firebase/storage":"./firebase/firebase-storage.js"
+          }
+        }
+    </script>
+</head>
+
+<body>
+    <script type="module" src="client.js"></script>
+</body>
+
+</html>

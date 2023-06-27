@@ -1,0 +1,4 @@
+node_modules/
+firebaseConfig.json
+firebaseAuth.json
+package-lock.json
