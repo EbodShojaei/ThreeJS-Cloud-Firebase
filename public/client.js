@@ -64,7 +64,7 @@ fetch(fileURL)
   .then((response) => response.json())
   .then((data) => {
     const modelURL = data.url;
-    console.log(modelURL);
+    // console.log(modelURL);
 
     gltfLoader.load(
       modelURL,
