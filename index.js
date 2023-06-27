@@ -39,7 +39,7 @@ app.get('/model', async (req, res) => {
     const fileRef = storage.bucket().file('media/model.glb');
     const downloadURL = await fileRef.getSignedUrl({
       action: 'read',
-      expires: Date.now() + 30 * 1000,
+      expires: Date.now() + 1000,
     });
     res.json({ url: downloadURL[0] });
   } catch (error) {
