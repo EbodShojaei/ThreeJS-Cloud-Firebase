@@ -87,7 +87,7 @@ app.get(hashedPath, async (req, res) => {
       downloadCompleted = true;
     } else {
       // Handle unauthorized access to the hashed path
-      res.status(403).json({ error: 'Unauthorized access.' });
+      res.status(403).redirect('/');
     }
   } catch (error) {
     console.error(error);
