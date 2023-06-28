@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import Stats from 'three/examples/jsm/libs/stats.module';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 // Enable color management
 THREE.ColorManagement.enabled = true;
@@ -61,15 +61,12 @@ const mixer = new THREE.AnimationMixer(scene); // Create an animation mixer
 const fileURL = '/model';
 
 fetch(fileURL)
-  .then((response) => response.json())
-  .then((data) => {
-    const modelURL = data.url;
-    // console.log(modelURL);
+  .then((response) => response.arrayBuffer())
+  .then((buffer) => {
 
-    gltfLoader.load(
-      modelURL,
-      (object) => {
-        let avatar = object.scene;
+
+    gltfLoader.parse(buffer, '', (gltf) => {
+        let avatar = gltf.scene;
         avatar.scale.set(1, 1, 1);
         // avatar.rotation.x = -Math.PI / 2;
 
@@ -90,7 +87,7 @@ fetch(fileURL)
 
         scene.add(avatar);
 
-        const animations = object.animations;
+        const animations = gltf.animations;
 
         if (animations && animations.length > 0) {
           animations.forEach((animation, index) => {

@@ -1,4 +1,4 @@
+dist/
 node_modules/
-firebaseConfig.json
-firebaseAuth.json
+.env
 package-lock.json

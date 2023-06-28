@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "esbuild src/main.js --bundle --outfile=dist/bundle.js --minify && terser dist/bundle.js --compress --mangle --output dist/bundle.min.js",
     "start": "node index.js"
   },
   "dependencies": {
@@ -7,10 +8,17 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "esbuild": "0.18.10",
     "express": "^4.18.2",
     "firebase": "^9.23.0",
     "firebase-admin": "^11.9.0",
-    "save": "^2.9.0",
-    "three": "^0.153.0"
+    "fs": "^0.0.1-security",
+    "three": "^0.153.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "terser": "^5.18.2"
   }
 }
