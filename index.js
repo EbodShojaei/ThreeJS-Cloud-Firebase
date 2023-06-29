@@ -44,10 +44,10 @@ app.get('/', (req, res) => {
 });
 
 // Generate a random UUID hash as the route
-const hashedPath = `/model/${uuidv4()}`;
+const hashedPath = `/load/${uuidv4()}`;
 
 // Route to load the model
-app.get('/model', (req, res) => {
+app.get('/load', (req, res) => {
   const referer = req.header('Referer');
   const baseUrl = `${req.protocol}://${req.get('host')}/`;
 
@@ -75,13 +75,17 @@ app.get(hashedPath, async (req, res) => {
 
       // Fetch the GLB file from the specified URL
       const glbResponse = await axios.get(downloadURL[0], {
-        responseType: 'arraybuffer' // Specify the response type as arraybuffer
+        responseType: 'stream' // Specify the response type as stream
       });
-      const glbBuffer = Buffer.from(glbResponse.data);
 
-      // Send the GLB file as a binary stream to the client
-      res.type('application/octet-stream');
-      res.send(glbBuffer);
+      // Set the appropriate response headers
+      res.set({
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': 'attachment; filename="model.glb"'
+      });
+
+      // Pipe the stream directly to the response
+      glbResponse.data.pipe(res);
 
       // Set download completion flag
       downloadCompleted = true;

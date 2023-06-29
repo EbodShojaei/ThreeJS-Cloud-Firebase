@@ -58,15 +58,23 @@ gltfLoader.setDRACOLoader(draco);
 
 const mixer = new THREE.AnimationMixer(scene); // Create an animation mixer
 
-const fileURL = '/model';
+const fileURL = '/load';
 
 fetch(fileURL)
-  .then((response) => response.arrayBuffer())
-  .then((buffer) => {
+  .then((response) => {
+    // Create a new response with the blob type
+    return response.blob();
+  })
+  .then((blob) => {
+    // Create a blob URL from the blob
+    const blobURL = URL.createObjectURL(blob);
 
+    // Load the GLB file using the blob URL
+    gltfLoader.load(blobURL, (gltf) => {
+      URL.revokeObjectURL(blobURL);
 
-    gltfLoader.parse(buffer, '', (gltf) => {
-        let avatar = gltf.scene;
+        const avatar = gltf.scene;
+
         avatar.scale.set(1, 1, 1);
         // avatar.rotation.x = -Math.PI / 2;
 
