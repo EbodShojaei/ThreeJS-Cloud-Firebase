@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "esbuild src/main.js --bundle --outfile=dist/bundle.js --minify && terser dist/bundle.js --compress --mangle --output dist/bundle.min.js",
+    "build": "esbuild src/bundle/main.js --bundle --outfile=dist/bundle.js --minify && terser dist/bundle.js --compress --mangle --output dist/bundle.min.js",
     "start": "node index.js"
   },
   "dependencies": {

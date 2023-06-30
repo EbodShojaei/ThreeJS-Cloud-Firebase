@@ -60,63 +60,65 @@ const mixer = new THREE.AnimationMixer(scene); // Create an animation mixer
 
 const fileURL = '/load';
 
-fetch(fileURL)
-  .then((response) => {
-    // Create a new response with the blob type
-    return response.blob();
-  })
-  .then((blob) => {
-    // Create a blob URL from the blob
-    const blobURL = URL.createObjectURL(blob);
+const load = () => {
+  fetch(fileURL)
+    .then((response) => response.json())
+    .then((data) => {
+      const modelURL = data.url;
+      console.log(modelURL);
 
-    // Load the GLB file using the blob URL
-    gltfLoader.load(blobURL, (gltf) => {
-      URL.revokeObjectURL(blobURL);
+      gltfLoader.load(
+        modelURL,
+        (object) => {
+          console.log(object);
+          let avatar = object.scene;
+          avatar.scale.set(1, 1, 1);
+          // avatar.rotation.x = -Math.PI / 2;
 
-        const avatar = gltf.scene;
-
-        avatar.scale.set(1, 1, 1);
-        // avatar.rotation.x = -Math.PI / 2;
-
-        avatar.traverse((child) => {
-          if (child.isMesh) {
-            child.material.envMapIntensity = 1;
-            child.material.needsUpdate = true;
-            child.geometry.computeVertexNormals();
-            child.material.lightMapIntensity = 1;
-            child.material.emissiveIntensity = 1;
-            child.material.aoMapIntensity = 1;
-            child.material.normalScale = new THREE.Vector2(1, 1);
-            child.material.vertexColors = false;
-            child.material.visible = true;
-            child.material.alphaTest = 0;
-          }
-        });
-
-        scene.add(avatar);
-
-        const animations = gltf.animations;
-
-        if (animations && animations.length > 0) {
-          animations.forEach((animation, index) => {
-            if (index === 0) {
-              console.log(`Playing animation ${index}`);
-              const animationAction = mixer.clipAction(animation);
-              animationAction.play();
+          avatar.traverse((child) => {
+            if (child.isMesh) {
+              child.material.envMapIntensity = 1;
+              child.material.needsUpdate = true;
+              child.geometry.computeVertexNormals();
+              child.material.lightMapIntensity = 1;
+              child.material.emissiveIntensity = 1;
+              child.material.aoMapIntensity = 1;
+              child.material.normalScale = new THREE.Vector2(1, 1);
+              child.material.vertexColors = false;
+              child.material.visible = true;
+              child.material.alphaTest = 0;
             }
           });
-        }
-      },
-      (xhr) => {
-        console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
-      },
-      (error) => {
-        console.log(error);
-      });
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+
+          scene.add(avatar);
+
+          const animations = object.animations;
+
+          if (animations && animations.length > 0) {
+            animations.forEach((animation, index) => {
+              if (index === 0) {
+                console.log(`Playing animation ${index}`);
+                const animationAction = mixer.clipAction(animation);
+                animationAction.play();
+              }
+            });
+          }
+        },
+        (xhr) => {
+          console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
+        },
+        (error) => {
+          console.log(error);
+        });
+    })
+    .catch((error) => {
+      console.error(error);
+      console.log('Retrying...');
+      load();
+    });
+};
+
+load();
 
 window.addEventListener('resize', onWindowResize, false);
 
