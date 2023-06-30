@@ -65,12 +65,10 @@ const load = () => {
     .then((response) => response.json())
     .then((data) => {
       const modelURL = data.url;
-      console.log(modelURL);
 
       gltfLoader.load(
         modelURL,
         (object) => {
-          console.log(object);
           let avatar = object.scene;
           avatar.scale.set(1, 1, 1);
           // avatar.rotation.x = -Math.PI / 2;

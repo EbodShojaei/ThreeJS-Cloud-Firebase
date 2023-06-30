@@ -47,10 +47,6 @@ app.get('/', (req, res) => {
 
 // Generate a random UUID hash as the route
 const hashedPath = `/load/${uuidv4()}`;
-const hashedRetry = `/load/${uuidv4()}`;
-
-console.log('hashedPath: ', hashedPath);
-console.log('hashedRetry: ', hashedRetry);
 
 // Route to load the model
 app.get('/load', (req, res) => {
@@ -59,13 +55,13 @@ app.get('/load', (req, res) => {
 
   console.log('Loading the model...');
 
-  if (downloadCompleted || referer !== baseUrl) {
+  if (!downloadCompleted && referer === baseUrl && req.originalUrl === '/load') {
+    // Send the download URL to the client
+    res.json({ url: hashedPath });
+  } else {
     // Redirect users to the home page if download is completed
     res.redirect('/');
     console.log('Redirecting to the home page')
-  } else {
-    res.redirect(hashedPath);
-    console.log('Redirecting to the hashed path')
   }
 });
 
@@ -83,49 +79,25 @@ app.get(hashedPath, async (req, res) => {
         expires: Date.now() + 10000,
       });
 
-      axios.head(downloadURL)
+      axios.get(downloadURL, { responseType: 'arraybuffer' })
         .then(response => {
+          console.log('Sending cloud model...')
+          const fileData = response.data;
+          res.send(fileData);
+          downloadCompleted = true;
+        })
+        .catch(error => {
+          console.error(error);
           const statusCode = response.status;
           console.log('statusCode: ', statusCode);
-          if (statusCode === 429) {
-            console.log('Error 429: Too Many Requests');
 
-            // Redirect to the server file if the download limit is exceeded
-            res.json({ url: hashedRetry });
+          console.log('Sending local model...');
+          const glbFilePath = 'src/model/model.glb';
 
-          } else {
-            console.log('URL is accessible');
-
-            // Send the download URL to the client
-            res.json({ url: downloadURL[0] });
-            downloadCompleted = true;
-          }
-        })
-    } else {
-      // Handle unauthorized access to the hashed path
-      res.status(403).redirect('/');
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to load the model.' });
-  }
-});
-
-// Route handler for the hashed path
-app.get(hashedRetry, async (req, res) => {
-  const referer = req.header('Referer');
-  const baseUrl = `${req.protocol}://${req.get('host')}/`;
-
-  try {
-    if (!downloadCompleted && referer === baseUrl && req.originalUrl === hashedRetry) {
-      // Path to your GLB file
-      const glbFilePath = 'src/model/model.glb';
-
-      // Send the GLB file to the client
-      const glbFile = fs.readFileSync(glbFilePath);
-      res.send(glbFile);
-
-      downloadCompleted = true;
+          // Send the GLB file to the client
+          const glbFile = fs.readFileSync(glbFilePath);
+          res.send(glbFile);
+        });
     } else {
       // Handle unauthorized access to the hashed path
       res.status(403).redirect('/');
