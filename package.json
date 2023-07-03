@@ -15,6 +15,7 @@
     "firebase": "^9.23.0",
     "firebase-admin": "^11.9.0",
     "fs": "^0.0.1-security",
+    "module-alias": "^2.2.3",
     "router": "^1.3.8",
     "stream": "^0.0.2",
     "three": "^0.153.0",
@@ -22,5 +23,11 @@
   },
   "devDependencies": {
     "terser": "^5.18.2"
+  },
+  "_moduleAliases": {
+    "@component": "src/model",
+    "@config": "src/config",
+    "@js": "src/js",
+    "@routes": "src/routes"
   }
 }

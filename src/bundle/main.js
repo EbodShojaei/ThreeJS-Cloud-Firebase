@@ -69,6 +69,7 @@ const load = () => {
       gltfLoader.load(
         modelURL,
         (object) => {
+          console.log(modelURL);
           let avatar = object.scene;
           avatar.scale.set(1, 1, 1);
           // avatar.rotation.x = -Math.PI / 2;
@@ -116,7 +117,8 @@ const load = () => {
     });
 };
 
-load();
+// When dom content is loaded, load the model
+document.addEventListener('DOMContentLoaded', load);
 
 window.addEventListener('resize', onWindowResize, false);
 

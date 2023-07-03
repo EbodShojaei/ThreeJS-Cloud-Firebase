@@ -7,6 +7,9 @@ const deleteRoute = (router, routePath) => {
     if (route) {
         // Remove the route from the router stack
         router.stack.splice(router.stack.indexOf(route), 1);
+        console.log(`Route ${routePath} deleted`);
+    } else {
+        console.log(`Route ${routePath} not found`);
     }
 }
 
