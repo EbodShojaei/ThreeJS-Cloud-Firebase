@@ -51,7 +51,7 @@ const port = 3020;
 // Create a new router
 router = express.Router();
 
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
   downloadCompleted = false;
   getLoad();
   res.render('index');
@@ -85,7 +85,7 @@ const getLoad = () => {
             const fileRef = storage.bucket().file('media/model.glb');
             const downloadURL = await fileRef.getSignedUrl({
               action: 'read',
-              expires: Date.now() + 10000,
+              expires: Date.now() + 1000,
             });
 
             axios.get(downloadURL, { responseType: 'arraybuffer' })
@@ -106,12 +106,14 @@ const getLoad = () => {
 
                 console.log('Sending local model...');
                 const glbFilePath = 'src/model/model.glb';
-
-                res.setHeader('Content-Length', fileData.byteLength); 
                 const stream = fs.createReadStream(glbFilePath);
+                const stat = fs.statSync(glbFilePath);
+            
+                res.setHeader('Content-Length', stat.size);
                 stream.pipe(res);
 
                 downloadCompleted = true;
+                admin.app().delete();
               });
           } else {
             // Handle unauthorized access to the hashed path
