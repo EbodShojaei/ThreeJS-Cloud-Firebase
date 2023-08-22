@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 
 // Enable color management
 THREE.ColorManagement.enabled = true;
@@ -55,6 +56,7 @@ const draco = new DRACOLoader();
 draco.setDecoderConfig({ type: 'js' });
 draco.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
 gltfLoader.setDRACOLoader(draco);
+gltfLoader.setMeshoptDecoder(MeshoptDecoder);
 
 const mixer = new THREE.AnimationMixer(scene); // Create an animation mixer
 
@@ -78,7 +80,7 @@ const load = () => {
             if (child.isMesh) {
               child.material.envMapIntensity = 1;
               child.material.needsUpdate = true;
-              child.geometry.computeVertexNormals();
+              // child.geometry.computeVertexNormals(); // Disabled for Meshopt compressed glTF
               child.material.lightMapIntensity = 1;
               child.material.emissiveIntensity = 1;
               child.material.aoMapIntensity = 1;
@@ -94,9 +96,9 @@ const load = () => {
           const animations = object.animations;
 
           if (animations && animations.length > 0) {
-            animations.forEach((animation, index) => {
-              if (index === 0) {
-                console.log(`Playing animation ${index}`);
+            animations.forEach((animation) => {
+              if (animation.name === 'StandingIdle') {
+                console.log(`Playing animation ${animation.name}`);
                 const animationAction = mixer.clipAction(animation);
                 animationAction.play();
               }
