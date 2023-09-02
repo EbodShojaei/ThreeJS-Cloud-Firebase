@@ -3,12 +3,39 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Testing Three.js</title>    
+    <title>Testing Three.js</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
             overflow: hidden;
             margin: 0px;
+        }
+
+        #animationList {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            max-width: fit-content;
+            max-height: fit-content;
+            background-color: rgba(31, 31, 49, 0.5);
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            z-index: 100;
+        }
+
+        #animationList div {
+            cursor: pointer;
+            color: rgb(255, 255, 255);
+            padding: 5px;
+            transition: color 0.3s;
+        }
+
+        #animationList div:hover {
+            color: rgb(90, 250, 234);
+            transition: color 0.3s;
         }
     </style>
 </head>

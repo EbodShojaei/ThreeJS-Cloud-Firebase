@@ -59,6 +59,36 @@ gltfLoader.setDRACOLoader(draco);
 gltfLoader.setMeshoptDecoder(MeshoptDecoder);
 
 const mixer = new THREE.AnimationMixer(scene); // Create an animation mixer
+let currentAnimation = null;
+
+const playAnimation = (animation) => {
+  const newAnimation = mixer.clipAction(animation);
+
+  if (currentAnimation && currentAnimation !== newAnimation) {
+    currentAnimation.fadeOut(0.3);
+
+    // Reset and prepare the new animation
+    newAnimation.reset()
+      .setEffectiveTimeScale(1.5)
+      .setEffectiveWeight(1)
+      .fadeIn(0.3)
+      .play();
+  } else if (!currentAnimation) {
+    // If no current animation, just play the new one
+    newAnimation.setEffectiveTimeScale(1.5)
+    .setEffectiveWeight(1)
+    .play();
+  }
+
+  // Update the current animation reference
+  currentAnimation = newAnimation;
+};
+
+
+const animationList = document.createElement('div');
+animationList.style.visibility = 'hidden';
+animationList.id = 'animationList';
+document.body.appendChild(animationList);
 
 const fileURL = '/load';
 
@@ -96,13 +126,16 @@ const load = () => {
           const animations = object.animations;
 
           if (animations && animations.length > 0) {
-            animations.forEach((animation) => {
-              if (animation.name === 'StandingIdle') {
-                console.log(`Playing animation ${animation.name}`);
-                const animationAction = mixer.clipAction(animation);
-                animationAction.play();
-              }
+            animations.forEach((animation, index) => {
+              const listItem = document.createElement('div');
+              listItem.textContent = animation.name;
+              listItem.dataset.index = index;
+              listItem.addEventListener('click', () => playAnimation(animation));
+              animationList.appendChild(listItem);
             });
+
+            animationList.style.visibility = 'visible';
+            playAnimation(animations[6]);
           }
         },
         (xhr) => {
@@ -133,6 +166,8 @@ function onWindowResize() {
 
 const stats = new Stats();
 document.body.appendChild(stats.dom);
+stats.dom.style.left = 'auto';
+stats.dom.style.right = '0';
 
 function animate() {
   requestAnimationFrame(animate);
