@@ -8,7 +8,7 @@ app.set('view engine', 'ejs'); // Enable ejs middleware.
 app.use(cors()); // Set up CORS middleware
 
 // Serve static files
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist/min')));
 
 // Initialize the router
 const router = express.Router();
