@@ -2,6 +2,7 @@
 
 let constrain = 20;
 let mouseOverContainer = document.getElementById('container');
+let playground = document.getElementById('playground');
 let animationList = document.getElementById('animationList');
 let animationItems = document.getElementById('animationItems');
 
@@ -26,8 +27,21 @@ const elementDrag = (e) => {
     pos3 = e.clientX;
     pos4 = e.clientY;
 
-    posX -= pos1; // Update translate X
-    posY -= pos2; // Update translate Y
+    let newPosX = posX - pos1;
+    let newPosY = posY - pos2;
+
+    let containerRect = playground.getBoundingClientRect();
+    let elementRect = animationList.getBoundingClientRect();
+
+    // Check boundaries for X-axis
+    if (newPosX + elementRect.width <= containerRect.width && newPosX >= 0) {
+        posX = newPosX;
+    }
+
+    // Check boundaries for Y-axis
+    if (newPosY + elementRect.height <= containerRect.height && newPosY >= 0) {
+        posY = newPosY;
+    }
 
     translateTransform = `translate3d(${posX}px, ${posY}px, 0px)`;
     applyTransforms();

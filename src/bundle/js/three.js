@@ -69,6 +69,9 @@ animationItems.id = 'animationItems';
 const container = document.getElementById('container');
 animationList.appendChild(animationItems);
 container.appendChild(animationList);
+const playground = document.createElement('div');
+playground.id = 'playground';
+document.body.appendChild(playground);
 
 const fileURL = '/load';
 
