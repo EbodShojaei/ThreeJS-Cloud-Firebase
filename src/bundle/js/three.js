@@ -64,7 +64,10 @@ let currentAnimation = null;
 const animationList = document.createElement('div');
 animationList.style.visibility = 'hidden';
 animationList.id = 'animationList';
+const animationItems = document.createElement('div');
+animationItems.id = 'animationItems';
 const container = document.getElementById('container');
+animationList.appendChild(animationItems);
 container.appendChild(animationList);
 
 const fileURL = '/load';
@@ -133,7 +136,7 @@ const load = () => {
               listItem.textContent = animation.name;
               listItem.dataset.index = index;
               listItem.addEventListener('click', () => playAnimation(animation));
-              animationList.appendChild(listItem);
+              animationItems.appendChild(listItem);
             });
 
             animationList.style.visibility = 'visible';
@@ -179,12 +182,12 @@ function animate() {
   mixer.update(0.01); // Update the animation mixer with a fixed time step
 
   if (avatar) {
-  avatar.traverse((child) => {
-    if (child.isMesh && child.material.opacity < 1) {
-      child.material.opacity += 0.05;
-    }
-  });
-};
+    avatar.traverse((child) => {
+      if (child.isMesh && child.material.opacity < 1) {
+        child.material.opacity += 0.05;
+      }
+    });
+  };
 
   render();
 

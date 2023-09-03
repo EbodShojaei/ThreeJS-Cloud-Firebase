@@ -11,14 +11,11 @@
             margin: 0px;
         }
 
-        #animationList {
-            cursor: move;
-            position: absolute;
-            transform: translate3d(0, 0, 0);
-            width: calc(fit-content + 20px);
-            height: fit-content;
-            background-color: rgba(31, 31, 49, 0.5);
+        #animationItems {
+            transition: transform 0.1s ease;
+            background: linear-gradient(135deg, rgba(31, 31, 49, 0.8), rgba(34, 3, 38, 0.5));
             padding: 10px;
+            padding-right: 20px;
             margin: 10px;
             border-radius: 5px;
             font-family: Arial, Helvetica, sans-serif;
@@ -26,14 +23,22 @@
             z-index: 100;
         }
 
-        #animationList div {
+        #animationList {
+            cursor: move;
+            position: absolute;
+            width: fit-content;
+            height: fit-content;
+        }
+
+        #animationItems div {
             cursor: pointer;
             color: rgb(255, 255, 255);
             padding: 5px;
             transition: color 0.3s;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        #animationList div:hover {
+        #animationItems div:hover {
             color: rgb(90, 250, 234);
             transition: color 0.3s;
         }
