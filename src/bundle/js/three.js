@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Scene, Color, AmbientLight, HemisphereLight, DirectionalLight, PerspectiveCamera, WebGLRenderer, AnimationMixer, Vector2, AxesHelper, sRGBEncoding, SRGBColorSpace } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
@@ -6,33 +6,22 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 
 // Enable color management
-THREE.ColorManagement.enabled = true;
+const scene = new Scene();
+scene.add(new AxesHelper(5));
 
-const scene = new THREE.Scene();
-scene.add(new THREE.AxesHelper(5));
-
-// const pointLight = new THREE.PointLight(0xeeeeee, 1);
-// pointLight.position.set(0.8, 1.4, 1.0);
-// scene.add(pointLight);
-
-const ambientLight = new THREE.AmbientLight(0xB19CD9, 2);
+const ambientLight = new AmbientLight(0xB19CD9, 2);
 scene.add(ambientLight);
 
-const hemiLight = new THREE.HemisphereLight(0xFFD580, 0xB19CD9, 1);
+const hemiLight = new HemisphereLight(0xFFD580, 0xB19CD9, 1);
 scene.add(hemiLight);
 
-// const light = new THREE.SpotLight(0xFFD580, 4);
-// light.position.set(8, 14, 10);
-// light.castShadow = true;
-// scene.add(light);
-
-const directionalLight = new THREE.DirectionalLight(0xFFD580, 4);
+const directionalLight = new DirectionalLight(0xFFD580, 4);
 directionalLight.position.set(30, -20, 10);
 scene.add(directionalLight);
 
-scene.background = new THREE.Color(0xdddddd);
+scene.background = new Color(0xdddddd);
 
-const camera = new THREE.PerspectiveCamera(
+const camera = new PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.1,
@@ -40,10 +29,10 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.set(0.8, 1.4, 1.0);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.LinearEncoding = THREE.SRGBColorSpace;
+renderer.LinearEncoding = SRGBColorSpace;
+
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -59,7 +48,7 @@ gltfLoader.setDRACOLoader(draco);
 gltfLoader.setMeshoptDecoder(MeshoptDecoder);
 
 let avatar = null;
-const mixer = new THREE.AnimationMixer(scene); // Create an animation mixer
+const mixer = new AnimationMixer(scene); // Create an animation mixer
 let currentAnimation = null;
 const animationList = document.createElement('div');
 animationList.style.visibility = 'hidden';
@@ -122,7 +111,7 @@ const load = () => {
               child.material.lightMapIntensity = 1;
               child.material.emissiveIntensity = 1;
               child.material.aoMapIntensity = 1;
-              child.material.normalScale = new THREE.Vector2(1, 1);
+              child.material.normalScale = new Vector2(1, 1);
               child.material.vertexColors = false;
               child.material.visible = true;
               child.material.alphaTest = 0;
