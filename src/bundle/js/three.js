@@ -33,7 +33,8 @@ const renderer = new WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.LinearEncoding = SRGBColorSpace;
 
-document.body.appendChild(renderer.domElement);
+const mainElement = document.querySelector('main');
+mainElement.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -50,17 +51,47 @@ gltfLoader.setMeshoptDecoder(MeshoptDecoder);
 let avatar = null;
 const mixer = new AnimationMixer(scene); // Create an animation mixer
 let currentAnimation = null;
+
+const container = document.getElementById('container');
+
 const animationList = document.createElement('div');
 animationList.style.visibility = 'hidden';
 animationList.id = 'animationList';
+container.appendChild(animationList);
+
 const animationItems = document.createElement('div');
 animationItems.id = 'animationItems';
-const container = document.getElementById('container');
 animationList.appendChild(animationItems);
-container.appendChild(animationList);
+
 const playground = document.createElement('div');
 playground.id = 'playground';
-document.body.appendChild(playground);
+mainElement.appendChild(playground);
+
+const overlay = document.createElement('div');
+overlay.id = 'overlay';
+document.body.appendChild(overlay);
+
+const tryAgain = document.createElement('div');
+tryAgain.id = 'tryAgain';
+tryAgain.style.display = 'none';
+tryAgain.textContent = 'Oops! Something went wrong.';
+overlay.appendChild(tryAgain);
+
+const button = document.createElement('div');
+button.className = 'returnButton';
+button.textContent = 'Try again';
+tryAgain.appendChild(button);
+
+button.addEventListener('click', () => {
+  tryAgain.style.display = 'none';
+  overlay.classList.remove('active');
+  load();
+});
+
+const callReload = () => {
+  overlay.classList.add('active');
+  tryAgain.style.display = 'block';
+};
 
 const fileURL = '/load';
 
@@ -88,15 +119,25 @@ const playAnimation = (animation) => {
 };
 
 const load = () => {
+  console.log('Loading model...');
+
   fetch(fileURL)
-    .then((response) => response.json())
+    .then((response) => {
+      if (response.status === 429) {
+        throw new Error('Too many requests');
+      }
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
     .then((data) => {
       const modelURL = data.url;
 
       gltfLoader.load(
         modelURL,
         (object) => {
-          console.log(modelURL);
           avatar = object.scene;
           avatar.scale.set(1, 1, 1);
           // avatar.rotation.x = -Math.PI / 2;
@@ -140,12 +181,15 @@ const load = () => {
         },
         (error) => {
           console.log(error);
+
+          return callReload();
         });
     })
     .catch((error) => {
       console.error(error);
       console.log('Retrying...');
-      load();
+
+      return callReload();
     });
 };
 
@@ -162,7 +206,7 @@ function onWindowResize() {
 }
 
 const stats = new Stats();
-document.body.appendChild(stats.dom);
+mainElement.appendChild(stats.dom);
 stats.dom.style.left = 'auto';
 stats.dom.style.right = '0';
 

@@ -10,6 +10,7 @@ const getModel = async (downloadURL, res) => {
             const fileData = response.data;
 
             res.setHeader('Content-Length', fileData.byteLength);
+            res.setHeader('Content-Type', 'model/gltf-binary');
             const stream = new PassThrough();
             stream.end(fileData);
             stream.pipe(res);
@@ -21,6 +22,7 @@ const getModel = async (downloadURL, res) => {
             const stat = fs.statSync(glbFilePath);
 
             res.setHeader('Content-Length', stat.size);
+            res.setHeader('Content-Type', 'model/gltf-binary');
             stream.pipe(res);
         });
 };

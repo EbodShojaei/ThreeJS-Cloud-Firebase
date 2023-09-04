@@ -2,11 +2,11 @@
   "author": "Ebod Shojaei",
   "name": "three-firebase-esbuild",
   "version": "2.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "prebuild": "node -e \"const fs = require('fs'); ['dist', 'dist/min'].forEach(dir => { if (!fs.existsSync(dir)){ fs.mkdirSync(dir, { recursive: true }); }});\"",
-    "build": "esbuild src/bundle/main.js --bundle --outfile=dist/bundle.js --minify && terser dist/bundle.js --compress --mangle --output dist/min/bundle.min.js",
-    "start": "node index.js"
+    "prebuild": "node -e \"const fs = require('fs'); const dir = 'dist'; if (!fs.existsSync(dir)){ fs.mkdirSync(dir, { recursive: true }); }\"",
+    "build": "esbuild src/bundle/main.js --bundle --outfile=dist/bundle.min.js --minify && terser dist/bundle.min.js --compress --mangle --output dist/bundle.min.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "axios": "^1.4.0",
@@ -17,9 +17,11 @@
     "ejs": "^3.1.9",
     "esbuild": "0.18.10",
     "express": "^4.18.2",
-    "firebase": "^9.23.0",
+    "express-rate-limit": "^6.10.0",
+    "express-session": "^1.17.3",
     "firebase-admin": "^11.9.0",
     "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.2.3",
     "router": "^1.3.8",
     "stream": "^0.0.2",
@@ -33,6 +35,7 @@
     "@component": "src/model",
     "@config": "src/config",
     "@js": "src/js",
+    "@middleware": "src/middleware",
     "@routes": "src/routes"
   }
 }

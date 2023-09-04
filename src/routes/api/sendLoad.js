@@ -2,55 +2,39 @@ const { v4: uuidv4 } = require('uuid');
 const { router } = require('@config/dependencies');
 const getCloudLink = require('@js/getCloudLink');
 const getModel = require('@js/getModel');
-const deleteRoute = require('@js/deleteRoute');
+const limiter = require('@middleware/rateLimit');
+const checkSession = require('@middleware/checkSession');
+
+const pathMap = {};
 
 const sendLoad = () => {
-  const hashedPaths = []; // Track the generated hashed paths
-
-  router.get('/load', (req, res) => {
-    let downloadCompleted = false;
-    const referer = req.header('Referer');
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-
-    console.log('Loading the model...');
-
-    if (!downloadCompleted && referer === baseUrl && req.originalUrl === '/load') {
-      // Generate a random UUID hash as the route
-      const hashedPath = `/load/${uuidv4()}`;
-
-      // Store the hashed path in the array
-      hashedPaths.push(hashedPath);
-
-      // Route handler for the hashed path
-      router.get(hashedPath, async (req, res) => {
-        const referer = req.header('Referer');
-        const baseUrl = `${req.protocol}://${req.get('host')}/`;
-
-        try {
-          if (!downloadCompleted && referer === baseUrl && req.originalUrl === hashedPath) {
-            const downloadURL = await getCloudLink('model.glb');
-            getModel(downloadURL, res);
-            downloadCompleted = true;
-          } else {
-            // Handle unauthorized access to the hashed path
-            res.status(403).redirect('/');
-          }
-        } catch (error) {
-          console.error(error);
-          res.status(500).json({ error: 'Failed to load the model.' });
-        } finally {
-          // Delete loaded routes
-          deleteRoute(router, hashedPath);
-          deleteRoute(router, '/load');
-        };
-      });
-
-      // Send the download URL to the client
-      res.json({ url: hashedPath });
+  router.get('/load', checkSession, limiter, async (req, res) => {
+    if (req.session.init && !req.session.isDownloaded) {
+      const hash = uuidv4();
+      pathMap[hash] = true;
+      res.json({ url: `/load/${hash}` });
     } else {
-      // Redirect users to the home page if download is completed
-      res.redirect('/');
       console.log('Redirecting to the home page');
+      res.redirect('/');
+    }
+  });
+
+  router.get('/load/:hash', checkSession, limiter, async (req, res) => {
+    const hash = req.params.hash;
+
+    if (pathMap[hash] && req.session.init) {
+      try {
+        const downloadURL = await getCloudLink('model.glb');
+        await getModel(downloadURL, res);
+        req.session.isDownloaded = 'true';
+        delete pathMap[hash];
+      } catch (error) {
+        console.error(error);
+        res.render('error', { statusCode: 500, errorMessage: 'Internal Server Error. Model load failed.' });
+      }
+    } else {
+      console.log('Unauthorized access to the hashed path');
+      res.status(403).redirect('/');
     }
   });
 
