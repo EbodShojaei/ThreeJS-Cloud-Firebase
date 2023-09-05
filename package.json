@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "prebuild": "node -e \"const fs = require('fs'); const dir = 'dist'; if (!fs.existsSync(dir)){ fs.mkdirSync(dir, { recursive: true }); }\"",
-    "build": "esbuild src/bundle/main.js --bundle --outfile=dist/bundle.min.js --minify && terser dist/bundle.min.js --compress --mangle --output dist/bundle.min.js",
+    "build": "esbuild src/bundle/main.js --bundle --outfile=dist/bundle.min.js --minify && esbuild src/bundle/styles/global.css --bundle --outfile=dist/styles.min.css --minify && terser dist/bundle.min.js --compress --mangle --output dist/bundle.min.js",
     "start": "node server.js"
   },
   "dependencies": {
