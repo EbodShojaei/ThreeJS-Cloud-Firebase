@@ -1,6 +1,6 @@
 # THREE.JS with Express, Firebase & ESBuild
 
-A simple website using Node.js that connects to an encrypted Firebase store containing static model files (i.e., .glb) that are accessed using signed URLs. See the [live demo](https://sleepy-frog-buckle.cyclic.app/) for more details.
+A simple website using Node.js that connects to an encrypted Firebase store containing static model files (i.e., .glb) that are accessed using signed URLs. See the [live demo](https://viewebod.cyclic.app/) for more details.
 
 	 Author: Ebod Shojaei
 	 Version: 2.0.0
